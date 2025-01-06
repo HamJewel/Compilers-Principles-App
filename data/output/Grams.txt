@@ -1,0 +1,68 @@
+program definition-list
+definition-list definition-list definition
+definition-list definition
+definition variable-definition
+definition function-definition
+variable-definition type-indicator ID ;
+variable-definition type-indicator ID [ NUM ] ;
+type-indicator int
+type-indicator float
+type-indicator double
+type-indicator void
+function-definition type-indicator ID ( parameters ) compound-stmt
+parameters parameter-list
+parameters void
+parameter-list parameter-list , parameter
+parameter-list parameter
+parameter type-indicator ID
+parameter type-indicator ID [ ]
+compound-stmt { local-definitions statement-list }
+local-definitions local-definitions variable-definition
+local-definitions @
+statement-list statement-list statement
+statement-list @
+statement expression-stmt
+statement compound-stmt
+statement condition-stmt
+statement while-stmt
+statement dowhile-stmt
+statement return-stmt
+expression-stmt expression ;
+expression-stmt ;
+condition-stmt if ( expression ) statement
+condition-stmt if ( expression ) statement else statement
+while-stmt while ( expression ) statement
+dowhile-stmt do statement while ( expression ) ;
+return-stmt return ;
+return-stmt return expression ;
+expression variable = expression
+expression simple-expression
+variable ID
+variable ID [ expression ]
+simple-expression additive-expression relop additive-expression
+simple-expression additive-expression
+relop <=
+relop <
+relop >
+relop >=
+relop ==
+relop !=
+additive-expression additive-expression addop term
+additive-expression term
+addop +
+addop -
+term term mulop factor
+term factor
+mulop *
+mulop /
+mulop %
+mulop ^
+factor ( expression )
+factor variable
+factor call
+factor NUM
+call ID ( arguments )
+arguments argument-list
+arguments @
+argument-list argument-list , expression
+argument-list expression

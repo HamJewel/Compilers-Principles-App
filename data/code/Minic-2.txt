@@ -1,0 +1,28 @@
+int factorial(int n) {
+    int result;
+    result = 1;
+    while (n > 1) {
+        result = result * n;
+        n = n - 1;
+    };
+    return result;
+}
+
+void main(void) {
+    int num;
+    float fact;
+    num = 5;
+    fact = factorial(num);  // 调用阶乘函数
+
+    if (fact > 100) {
+        return;
+    } else if (fact == 120) {
+        do {
+            fact = fact - 10;
+        } while (fact > 100);
+    } else {
+        fact = 100;
+    }
+
+    return;
+}
