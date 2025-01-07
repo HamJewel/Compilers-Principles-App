@@ -45,9 +45,8 @@ class Output1:
     @staticmethod
     def execute():
         output = subprocess.check_output([REGEXER, REGEX, EXPORT_DIR])
-        output = decode(output)
+        ses.lines = decode(output).strip('\n').split('\n')  # 按行分割输出结果
         ses.Lexer = read(LEXC)
-        ses.lines = [line for line in output.rstrip('\n').split('\n')]  # 按行分割输出结果
         subprocess.run(['g++', LEXC, '-o', LEXER])
 
     @staticmethod
@@ -110,8 +109,7 @@ class Output3:
     @staticmethod
     def execute():
         output = subprocess.check_output([LALRER, BNF, EXPORT_DIR])
-        output = decode(output)
-        ses.lines = [line.strip() for line in output.strip().split('\n')]  # 按行分割输出结果
+        ses.lines = decode(output).strip().split('\n')  # 按行分割输出结果
 
     def getFSet(self, key):
         data = []
@@ -260,8 +258,7 @@ class Output5:
     @staticmethod
     def execute():
         output = subprocess.check_output([PARSER, GRAMS, TABLE, MAP, LEX, TREE])
-        output = decode(output)
-        ses.lines = [line.rstrip() for line in output.strip().split('\n')]  # 按行分割输出结果
+        ses.lines = decode(output).strip().split('\n')  # 按行分割输出结果
 
     def generate(self, state):
         data = []

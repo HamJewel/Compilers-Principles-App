@@ -36,22 +36,18 @@ KEYS = [
 ]
 
 
-def read(path):
-    try:
-        with open(path, 'r', encoding='utf-8') as f:
-            text = f.read()
-    except UnicodeDecodeError:
-        with open(path, 'r', encoding='gbk') as f:
-            text = f.read()
-    return text
-
-
 def decode(data):
     try:
-        text = data.decode('gbk')
-    except UnicodeDecodeError:
         text = data.decode('utf-8')
-    return text
+    except UnicodeDecodeError:
+        text = data.decode('gbk')
+    return text.replace('\r', '')  # 去除\r换行符(避免错误读入)
+
+
+def read(path):
+    with open(path, 'rb') as f:
+        data = f.read()
+    return decode(data)
 
 
 def save_text(text, path):
@@ -74,7 +70,7 @@ def input_module(page, content, label='开始分析', icon='🧑‍💻'):
     save = col2.button('保存文件', icon='💾', use_container_width=True)
     start = col2.button(label, icon=icon, type='primary', use_container_width=True)
     if load:
-        ses[f'txt{page}'] = decode(fu.read()).replace('\r', '')  # 去除\r换行符(避免错误读入)
+        ses[f'txt{page}'] = decode(fu.read())
     txt = col1.text_area(f'⌨️输入{content}', key=f'txt{page}', height=200).strip()
     if save:
         save_web_text(txt)
