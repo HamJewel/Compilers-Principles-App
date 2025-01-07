@@ -3,8 +3,6 @@ from ui.globals import *
 for k in KEYS:
     if k in ses:
         ses[k] = ses[k]
-if LIB_DIR is None:
-    LIB_DIR = '.'
 
 st.set_page_config('编译原理项目', page_icon=f'{LIB_DIR}/assets/logo.svg', layout='wide')
 st.logo(f'{LIB_DIR}/assets/logo.svg', size='large')

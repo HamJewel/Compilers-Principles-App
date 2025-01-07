@@ -2,7 +2,7 @@ from streamlit import session_state as ses
 import streamlit as st
 import os
 
-LIB_DIR = None
+LIB_DIR = '.'
 EXPORT_DIR = './data/output'
 REGEX = f'{EXPORT_DIR}/Regex.txt'
 MAP = f'{EXPORT_DIR}/Map.txt'
@@ -13,11 +13,10 @@ TABLE = f'{EXPORT_DIR}/Table.txt'
 TREE = f'{EXPORT_DIR}/Tree.txt'
 LEX = f'{EXPORT_DIR}/Lex.lex'
 LEXC = f'{EXPORT_DIR}/Lexer.c'
-TCC = './bin/tcc/tcc.exe'
-REGEXER = './bin/正则表达式分析器.exe'
-LEXER = './bin/词法分析器.exe'
-LALRER = './bin/LALR(1)分析器.exe'
-PARSER = './bin/语法分析器.exe'
+REGEXER = './bin/正则表达式分析器'
+LEXER = './bin/词法分析器'
+LALRER = './bin/LALR(1)分析器'
+PARSER = './bin/语法分析器'
 
 
 os.makedirs(EXPORT_DIR, exist_ok=True)

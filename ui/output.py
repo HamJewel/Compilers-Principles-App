@@ -44,10 +44,10 @@ def renderTree(data, font_size=14, title=None):
 class Output1:
     @staticmethod
     def execute():
-        output = subprocess.check_output(['wine', REGEXER, REGEX, EXPORT_DIR], text=True)
+        output = subprocess.check_output([REGEXER, REGEX, EXPORT_DIR], text=True)
         ses.Lexer = read(LEXC)
         ses.lines = [line for line in output.rstrip('\n').split('\n')]  # 按行分割输出结果
-        subprocess.run(['wine', TCC, LEXC, '-o', LEXER])
+        subprocess.run(['g++', LEXC, '-o', LEXER])
 
     @staticmethod
     def process():
@@ -88,7 +88,7 @@ class Output1:
 class Output2:
     @staticmethod
     def execute():
-        subprocess.run(['wine', LEXER, CODE, LEX])
+        subprocess.run([LEXER, CODE, LEX])
 
     @staticmethod
     def process():
@@ -108,7 +108,7 @@ class Output3:
 
     @staticmethod
     def execute():
-        output = subprocess.check_output(['wine', LALRER, BNF, EXPORT_DIR], text=True)
+        output = subprocess.check_output([LALRER, BNF, EXPORT_DIR], text=True)
         ses.lines = [line.strip() for line in output.strip().split('\n')]  # 按行分割输出结果
 
     def getFSet(self, key):
@@ -257,7 +257,7 @@ class Output5:
 
     @staticmethod
     def execute():
-        output = subprocess.check_output(['wine', PARSER, GRAMS, TABLE, MAP, LEX, TREE], text=True)
+        output = subprocess.check_output([PARSER, GRAMS, TABLE, MAP, LEX, TREE], text=True)
         ses.lines = [line.rstrip() for line in output.strip().split('\n')]  # 按行分割输出结果
 
     def generate(self, state):
