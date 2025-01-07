@@ -18,7 +18,7 @@ pages = {
     ],
 }
 pg = st.navigation(pages)  # 导航栏
-with st.sidebar.expander('个人信息', icon='👤'):
+with st.sidebar.expander('个人信息', icon='👤', expanded=True):
     for k, v in INFO.items():
         st.caption(f'**{k}**')
         st.caption(v)

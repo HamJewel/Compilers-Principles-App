@@ -48,9 +48,9 @@ def read(path):
 
 def decode(data):
     try:
-        text = data.decode('utf-8')
-    except UnicodeDecodeError:
         text = data.decode('gbk')
+    except UnicodeDecodeError:
+        text = data.decode('utf-8')
     return text
 
 
