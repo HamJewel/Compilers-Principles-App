@@ -216,7 +216,7 @@ class Output4:
     def process(text):
         ses._grams = [x.split(' ') for x in read(GRAMS).strip().split('\n')]
         rows = len(ses._grams)
-        cols = max([len(x) for x in ses._grams])
+        cols = max(len(x) for x in ses._grams)
         for i in range(rows):
             ses._grams[i] += [''] * (cols - len(ses._grams[i]))
         header = ['编号/下标', '0', ''] + list(map(str, (range(1, cols))))
@@ -226,16 +226,20 @@ class Output4:
         for j in range(cols):
             ses.grams[str(j)] = [ses._grams[i][j] for i in range(rows)]
         ses.lines = [line.split(' ') for line in text.split('\n')]
+        lines = []
         for i in range(len(ses.lines)):
-            ses.lines[i][0] = int(ses.lines[i][0])
+            if ses.lines[i][0] == '':
+                continue
+            data = [int(ses.lines[i][0])]
             for j in range(1, len(ses.lines[i])):
-                ses.lines[i][j] = tuple(map(int, ses.lines[i][j].split('-')))
+                data.append(tuple(map(int, ses.lines[i][j].split('-'))))
+            lines.append(data)
+        ses.lines = lines[:min(len(ses._grams), len(ses.lines))]
 
     def render(self):
         trees = []
-        for i, (gram, line) in enumerate(zip(ses._grams, ses.lines)):
-            if line[0] == -1:
-                break
+        for i in range(len(ses.lines)):
+            gram, line = ses._grams[i], ses.lines[i]
             nodes = {line[0]: {'name': self.map(gram[line[0]]), 'children': []}}
             for x, y in line[1:]:
                 if x not in nodes:
