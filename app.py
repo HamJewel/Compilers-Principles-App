@@ -3,7 +3,17 @@ from ui.globals import *
 for k in KEYS:
     if k in ses:
         ses[k] = ses[k]
-
+if 'txt1' not in ses:
+    ses['txt1'] = read('./data/regex/Minic.txt')
+if 'txt2' not in ses:
+    ses['txt2'] = read('./data/code/Minic-3.txt')
+if 'txt3' not in ses:
+    ses['txt3'] = read('./data/BNF/Minic.txt')
+if 'txt4' not in ses:
+    ses['txt4'] = read('./data/tree/Minic.txt')
+if 'txt5' not in ses:
+    ses['txt5'] = read('./data/code/Minic-3.txt')
+    
 st.set_page_config('编译原理项目', page_icon=f'{LIB_DIR}/assets/logo.svg', layout='wide')
 st.logo(f'{LIB_DIR}/assets/logo.svg', size='large')
 pages = {
