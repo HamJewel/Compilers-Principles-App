@@ -1,7 +1,7 @@
 from ui.output import *
 
 
-start, txt = input_module(2, '源程序代码')
+_, _, start, txt = input_module(2, '源程序代码')
 
 if start:
     st.toast('分析中...', icon='⏳')

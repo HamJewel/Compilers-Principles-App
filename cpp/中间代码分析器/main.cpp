@@ -10,18 +10,15 @@
 // 作者：黄俊銓-20222131035
 // 完成日期：2024年12月3日
 //*****************************************************************************
-#include "loader.h"
 #include "parse.h"
 int main(int argc, char* argv[]) {
-	if (argc < 6) {  // 没有文件路径参数传入，只进行编译
+	if (argc < 2) {  // 没有文件路径参数传入，只进行编译
 		cout << "Usage: " << argv[0] << " <filename>\n";
 		exit(0);
 	}
-	loadGrams(argv[1]), loadTable(argv[2]), loadMap(argv[3]), loadLex(argv[4]), loadTree(argv[5]);
-	cout << "---Parse---\n";
+	loadLex(argv[1]);
 	parse();
-	cout << "---Tree---\n";
-	printTree();
-	delNodes();
+	printQuads();
+	delQuads();
 	return 0;
 }

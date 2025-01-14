@@ -14,35 +14,27 @@
 #include "globals.h" 
 Node* newNode(string str = "") {
 	Node* x = new Node(str);
-	Ns.push(x);
+	Na.push_back(x);
 	return x;
 }
 void delNodes() {
-	while (!Ns.empty()) {
-		delete Ns.top();
-		Ns.pop();
-	}
+	for (auto& x : Na)
+		delete x;
 }
-void trim() {  // 整理分析栈元素，获取并反转节点栈元素
-	Nk.clear();
-	int n = Gy.r.size();
-	Nk.resize(n + 1);
-	Nk[0] = newNode();
-	Lc.erase(Lc.end() - 2 * n, Lc.end());
-	while (n) {
-		Nk[n--] = Nc.top();
-		Nc.pop();
-	}
+void trim() {
+	Nc = { newNode() };
+	Nc.insert(Nc.end(), Nb.end() - Gn, Nb.end());
+	Nb.erase(Nb.end() - Gn, Nb.end());
 }
 void merge(Node* x, Node* y) {  // 合并节点
 	if (y->token.empty()) x->kids.insert(x->kids.end(), y->kids.begin(), y->kids.end());
 	else x->kids.push_back(y);
 }
-Node* genNode() {
+void genNode() {
 	trim();
 	for (const auto& p : Edges[Gx].pairs)
-		merge(Nk[p.x], Nk[p.y]);
-	return Nk[Edges[Gx].root];
+		merge(Nc[p.x], Nc[p.y]);
+	Nb.push_back(Nc[Edges[Gx].root]);
 }
 void _printTree(int n, Node* x) {
 	cout << string(n, ' ') << x->token << '\n';

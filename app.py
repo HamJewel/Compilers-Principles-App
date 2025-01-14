@@ -13,7 +13,7 @@ if 'txt4' not in ses:
     ses['txt4'] = read('./data/tree/Minic.txt')
 if 'txt5' not in ses:
     ses['txt5'] = read('./data/code/Minic-3.txt')
-    
+
 st.set_page_config('编译原理项目', page_icon=f'{LIB_DIR}/assets/logo.svg', layout='wide')
 st.logo(f'{LIB_DIR}/assets/logo.svg', size='large')
 pages = {

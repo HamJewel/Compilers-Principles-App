@@ -2,10 +2,10 @@
 #include "globals.h"
 void genHeader() {
     LexCode +=
-        "#include<stdio.h>\n"
-        "#include<stdlib.h>\n"
-        "#include<string.h>\n"
-        "#include<stdbool.h>\n"
+        "#include <stdio.h>\n"
+        "#include <stdlib.h>\n"
+        "#include <string.h>\n"
+        "#include <stdbool.h>\n"
         "#define MaxCd " + to_string(CdCnt) + "\n"
         "int n, m;\n"
         "bool flag;\n"

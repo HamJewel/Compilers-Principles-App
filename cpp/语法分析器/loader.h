@@ -51,14 +51,12 @@ void loadMap(const string& path) {
 		cout << "Error opening map file\n";
 		exit(0);
 	}
+	getline(file, line);
+	istringstream ss(line);
+	while (ss >> cd)
+		mainCd.insert(cd);
 	while (getline(file, line)) {
 		if (line.empty()) continue;
-		if (cd.empty()) {
-			istringstream ss(line);
-			while (ss >> cd)
-				mainCd.insert(cd);
-			continue;
-		}
 		int i = line.find('\t');
 		string k = line.substr(0, i), v = line.substr(i + 1);
 		idMap[k] = v;
@@ -76,9 +74,9 @@ void loadLex(const string& path) {
 		if (line.empty()) continue;
 		int i = line.find('\t');
 		if (i == -1)
-			Lexs.push_back(Lex(line, idMap[line]));
+			Lexs.push_back(Lex{ line, idMap[line] });
 		else
-			Lexs.push_back(Lex(line.substr(0, i), line.substr(i + 1)));
+			Lexs.push_back(Lex{ line.substr(0, i), line.substr(i + 1) });
 	}
 	file.close();
 }

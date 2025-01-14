@@ -16,7 +16,6 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include <stack>
 #include <set>
 #include <map>
 using namespace std;
@@ -25,7 +24,7 @@ using namespace std;
 #define ACCEPT "acc"
 set<string> mainCd;  // 大类编码
 map<string, string> idMap;
-map<string, string> tkMap = { {"(", "()"}, {")", "()"}, {"[", "[]"}, {"]", "[]"}, {"{", "{}"}, {"}", "{}"} };
+map<string, string> tkMap{ {"(", "()"}, {")", "()"}, {"[", "[]"}, {"]", "[]"}, {"{", "{}"}, {"}", "{}"} };
 struct Pair {
 	int x, y;  // x: 父节点编号 y: 子节点编号
 };
@@ -50,7 +49,6 @@ struct Gram {
 };
 struct Lex {  // 词法
 	string k, v;
-	Lex(string k, string v) : k(k), v(v) {}
 	string token() {  // 在LALR1分析时的接收token
 		return mainCd.find(k) != mainCd.end() ? idMap[k] : v;
 	}  // 大类编码的v是单词内容，需要取其单词名称
@@ -62,7 +60,6 @@ struct Lex {  // 词法
 struct State {
 	string id, token;
 	// 重载 operator< 来进行Hash比较
-	State(string id, string token) :id(id), token(token) {}
 	bool operator<(const State& other) const {
 		return id != other.id ? stoi(id) < stoi(other.id) : token < other.token;
 	}
@@ -70,19 +67,12 @@ struct State {
 bool isEmpty;  // 是否接收空串
 int lexi, step;  // 当前读取的词法下标 当前语法分析的步骤数
 string id, in, mv;  // 状态编号，输入token，动作
-int Gx;  // 当前归约要用的文法产生式下标
+int Gx, Gn;  // 当前归约要用的文法产生式下标、文法右部token数
 Gram Gy;  // 当前归约要用的文法产生式
 Node* Root;  // 语法树根节点
-stack<Node*> Ns;  // 记录所有开辟的节点(用来析构)
-stack<Node*> Nc;  // 语法树节点逆序记录
-vector<Node*> Nk;  // 语法树节点正序记录
+vector<Node*> Na, Nb, Nc;  // 语法树节点记录
 vector<Lex> Lc;  // 词组分析栈
 vector<Lex> Lexs;  // 读取的Lex文件中的所有词组
 vector<Gram> Grams;  // 所有文法
 vector<Edge> Edges;  // 语法树的边
 map<State, string> Table;  // 分析表
-string Lookup(State key) {
-	if (Table.find(key) != Table.end()) return Table[key];
-	key.token = EMPTY;  // 查询能否接收空串
-	return 'e' + Table[key];
-}

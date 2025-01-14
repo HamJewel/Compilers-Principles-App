@@ -13,11 +13,12 @@ TABLE = f'{EXPORT_DIR}/Table.txt'
 TREE = f'{EXPORT_DIR}/Tree.txt'
 LEX = f'{EXPORT_DIR}/Lex.lex'
 LEXC = f'{EXPORT_DIR}/Lexer.c'
-REGEXER = './bin/正则表达式分析器'
-LEXER = './bin/词法分析器'
-LALRER = './bin/LALR(1)分析器'
-PARSER = './bin/语法分析器'
-
+TCC = './bin/tcc/tcc.exe'
+REGEXER = './bin/正则表达式分析器.exe'
+LEXER = './bin/词法分析器.exe'
+LALRER = './bin/LALR(1)分析器.exe'
+PARSER = './bin/语法分析器.exe'
+INTERMER = './bin/中间代码分析器.exe'
 
 os.makedirs(EXPORT_DIR, exist_ok=True)
 RULES = r"""☆ 如果与正则表达式符号冲突(+、|、(、)、*、?、~)，用\进行转义(如\+)
@@ -30,9 +31,9 @@ INFO = {'✍️姓名': '黄俊銓', '🏫班级': '2022计科2', '🆔学号': 
 KEYS = [
     'txt1', 'lc1', 'NFA', 'DFA', 'MDFA', 'MDFAG', 'Lexer', 'rankdir',
     'txt2', 'lc2', 'Lex',
-    'txt3', 'lc3', 'Grams', 'First', 'Follow', 'LRDFA', 'LADFA', 'STB', 'DTB',
-    'txt4', 'lc4', 'grams', 'Trees',
-    'txt5', 'lc5', 'TreeList', 'TreeMap', 'Steps', 'K'
+    'txt3', 'lc3', 'grams', 'Grams', 'First', 'Follow', 'LRDFA', 'LADFA', 'STB', 'DTB',
+    'txt4', 'lc4', 'Trees',
+    'txt5', 'lc5', 'interm', 'TreeList', 'TreeMap', 'Steps', 'K', 'Interm'
 ]
 
 
@@ -77,4 +78,4 @@ def input_module(page, content, label='开始分析', icon='🧑‍💻'):
     if col1.checkbox('🔡忽略大小写', key=f'lc{page}'):
         txt = txt.lower()
     st.divider()
-    return start, txt
+    return col1, col2, start, txt

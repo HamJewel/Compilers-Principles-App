@@ -1,7 +1,7 @@
 from ui.output import *
 
 
-start, txt = input_module(3, 'BNF文法')
+_, _, start, txt = input_module(3, 'BNF文法')
 
 if start:
     st.toast('分析中...', icon='⏳')

@@ -14,12 +14,12 @@
 #include "globals.h"
 
 // First和Follow集合
-unordered_map<string, set<string>> First, Follow;
+umap<string, set<string>> First, Follow;
 
-// 获取全部First集合的大小总和
-int FirstAllSize() {
+// 获取Fset集合的大小总和
+int FsetAllSize(umap<string, set<string>>& fset) {
 	int size = 0;
-	for (auto& x : First)
+	for (auto& x : fset)
 		size += x.second.size();
 	return size;
 }
@@ -41,21 +41,13 @@ void buildFirstAll() {
 			}
 			if (flag) First[gram.left].insert(EMPTY);  // 如果遍历完右部，flag还是true,说明@∈First[右部]
 		}
-		lastSize = newSize, newSize = FirstAllSize();  // 更新全部First集合的大小
+		lastSize = newSize, newSize = FsetAllSize(First);  // 更新全部First集合的大小
 	}
-}
-// 获取全部Follow集合的大小总和
-int FollowAllSize() {
-	int size = 0;
-	for (auto& x : Follow)
-		size += x.second.size();
-	return size;
 }
 // 迭代构建全部Follow集合
 void buildFollowAll() {
-	int lastSize = -1, newSize = 0;
-	Follow[Grams[0].left] = { END };  // 初始化(默认第一条文法的左部为开始符号)
-	newSize = FollowAllSize();  // 求当前全部Follow集合的大小总和
+	Follow[Grams[0].left] = { END };  // 初始化(默认第一条文法的左部为终结符)
+	int lastSize = -1, newSize = 1;
 	while (lastSize != newSize) {  // 如果全部Follow集合的大小不再变化，就跳出计算
 		for (auto& x : Grams) {  // 遍历每一条文法规则
 			for (int i = 0; i < x.right.size(); ++i) {  // 遍历右部的每一个token
@@ -71,6 +63,6 @@ void buildFollowAll() {
 				if (flag) mergeSet(Follow[x.right[i]], Follow[x.left]);  // 将Follow[A]合并到Follow[Xi]中
 			}
 		}
-		lastSize = newSize, newSize = FollowAllSize();  // 更新新旧Follow集合大小的总和
+		lastSize = newSize, newSize = FsetAllSize(Follow);  // 更新新旧Follow集合大小的总和
 	}
 }

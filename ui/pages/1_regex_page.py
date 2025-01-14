@@ -1,7 +1,7 @@
 from ui.output import *
 
 
-start, txt = input_module(1, '正则表达式')
+_, _, start, txt = input_module(1, '正则表达式')
 
 if start:
     st.toast('分析中...', icon='⏳')

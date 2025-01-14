@@ -11,17 +11,18 @@
 // 完成日期：2024年12月3日
 //*****************************************************************************
 #pragma once
-#include<iostream>
-#include<string>
-#include<vector>
-#include<fstream>
-#include<set>
-#include<map>
-#include<unordered_map>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <fstream>
+#include <set>
+#include <map>
+#include <unordered_map>
 using namespace std;
+#define umap unordered_map  // 定义别名
 #define SUFFIX "'"  // 扩充文法的后缀名
-#define EMPTY "@"  //空串符
-#define END "$"  //终结符
+#define EMPTY "@"  // 空串符
+#define END "$"  // 终结符
 #define ACCEPT "acc"  // 接受动作(这个在LALR(1)分析表的时候使用)
 #define OR string(1, char(-2))  // 转义或'|'的映射标识
 const string Blank = " \t\n";

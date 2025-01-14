@@ -47,7 +47,7 @@ class Output1:
         output = subprocess.check_output([REGEXER, REGEX, EXPORT_DIR])
         ses.lines = decode(output).strip('\n').split('\n')  # 按行分割输出结果
         ses.Lexer = read(LEXC)
-        subprocess.run(['g++', LEXC, '-o', LEXER])
+        subprocess.run([TCC, LEXC, '-o', LEXER])
 
     @staticmethod
     def process():
@@ -58,6 +58,7 @@ class Output1:
                 i += 1
                 continue
             tables[i].append(line.split('\t'))
+
         ses.NFA = DF(tables[0][1:], columns=tables[0][0])
         ses.DFA = DF(tables[1][1:], columns=tables[1][0])
         ses.MDFA = DF(tables[2][1:], columns=tables[2][0])
@@ -92,7 +93,7 @@ class Output2:
 
     @staticmethod
     def process():
-        lines = read(LEX).strip().split('\n')
+        lines = read(LEX).strip('\n').split('\n')
         data = [line.split('\t') for line in lines]
         ses.Lex = DF(data, columns=['单词编码', '单词内容']).fillna('')
 
@@ -109,7 +110,7 @@ class Output3:
     @staticmethod
     def execute():
         output = subprocess.check_output([LALRER, BNF, EXPORT_DIR])
-        ses.lines = decode(output).strip().split('\n')  # 按行分割输出结果
+        ses.lines = decode(output).strip('\n').split('\n')  # 按行分割输出结果
 
     def getFSet(self, key):
         data = []
@@ -191,8 +192,14 @@ class Output3:
             self.k += 2
         self.mergeTerms()
 
-        ses.Grams = [x.replace(' ', ' → ', 1) for x in read(GRAMS).strip().split('\n')]
-        ses.Grams = DF({'编号': range(len(ses.Grams)), '产生式': ses.Grams})
+        data = read(GRAMS).strip().split('\n')
+        ses.grams = [x.replace(' ', ' → ', 1) for x in data]
+        data = [x.split(' ') for x in ses.grams]
+        cols = max(len(x) for x in data)
+        for i in range(len(data)):
+            data[i] = [i] + data[i] + [''] * (cols - len(data[i]))
+        header = ['编号/下标', '0', ''] + list(map(str, (range(1, cols - 1))))
+        ses.Grams = DF(data, columns=header)
         ses.LRDFA = self.toSparse(len(ses.LRIS), 'LRDFA')
         ses.LADFA = self.toSparse(len(ses.LAIS), 'LADFA')
         ses.LRDFA.insert(1, '状态', ses.LRIS)
@@ -214,17 +221,6 @@ class Output4:
 
     @staticmethod
     def process(text):
-        ses._grams = [x.split(' ') for x in read(GRAMS).strip().split('\n')]
-        rows = len(ses._grams)
-        cols = max(len(x) for x in ses._grams)
-        for i in range(rows):
-            ses._grams[i] += [''] * (cols - len(ses._grams[i]))
-        header = ['编号/下标', '0', ''] + list(map(str, (range(1, cols))))
-        ses.grams = DF(None, index=range(len(ses._grams)), columns=header)
-        ses.grams['编号/下标'] = range(rows)
-        ses.grams[''] = '→'
-        for j in range(cols):
-            ses.grams[str(j)] = [ses._grams[i][j] for i in range(rows)]
         ses.lines = [line.split(' ') for line in text.split('\n')]
         lines = []
         for i in range(len(ses.lines)):
@@ -234,12 +230,12 @@ class Output4:
             for j in range(1, len(ses.lines[i])):
                 data.append(tuple(map(int, ses.lines[i][j].split('-'))))
             lines.append(data)
-        ses.lines = lines[:min(len(ses._grams), len(ses.lines))]
+        ses.lines = lines[:min(len(ses.Grams), len(ses.lines))]
 
     def render(self):
         trees = []
         for i in range(len(ses.lines)):
-            gram, line = ses._grams[i], ses.lines[i]
+            gram, line = ses.Grams.iloc[i], ses.lines[i]
             nodes = {line[0]: {'name': self.map(gram[line[0]]), 'children': []}}
             for x, y in line[1:]:
                 if x not in nodes:
@@ -262,7 +258,7 @@ class Output5:
     @staticmethod
     def execute():
         output = subprocess.check_output([PARSER, GRAMS, TABLE, MAP, LEX, TREE])
-        ses.lines = decode(output).strip().split('\n')  # 按行分割输出结果
+        ses.lines = decode(output).strip('\n').split('\n')  # 按行分割输出结果
 
     def generate(self, state):
         data = []
@@ -294,7 +290,7 @@ class Output5:
     def process(self):
         n = ses.lines.index('---Tree---')
         ses.Steps = [[i // 4 + 1, ses.lines[i + 1][5:], ses.lines[i + 2][5:-1].replace(' ', ' → ', 1),
-                         ses.lines[i + 3]] for i in range(1, n, 4)]
+                      ses.lines[i + 3]] for i in range(1, n, 4)]
         ses.Steps = DF(ses.Steps, columns=['步骤', '分析栈', '输入', '动作'])
         ses.lines = ses.lines[n + 1:]
         self.k = 0
@@ -312,8 +308,25 @@ class Output5:
         self.render()
 
 
+class Output6:
+    @staticmethod
+    def execute():
+        output = subprocess.check_output([INTERMER, LEX])
+        ses.lines = decode(output).strip('\n').split('\n')  # 按行分割输出结果
+
+    @staticmethod
+    def process():
+        data = [line.split('\t') for line in ses.lines]
+        ses.Interm = DF(data, columns=['编号/四元组', '运算符', '对象A', '对象B', '目标'])
+
+    def run(self):
+        self.execute()
+        self.process()
+
+
 output1 = Output1()  # 全局变量
 output2 = Output2()  # 全局变量
 output3 = Output3()  # 全局变量
 output4 = Output4()  # 全局变量
 output5 = Output5()  # 全局变量
+output6 = Output6()  # 全局变量
