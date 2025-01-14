@@ -14,11 +14,11 @@ TREE = f'{EXPORT_DIR}/Tree.txt'
 LEX = f'{EXPORT_DIR}/Lex.lex'
 LEXC = f'{EXPORT_DIR}/Lexer.c'
 TCC = './bin/tcc/tcc.exe'
-REGEXER = './bin/正则表达式分析器.exe'
-LEXER = './bin/词法分析器.exe'
-LALRER = './bin/LALR(1)分析器.exe'
-PARSER = './bin/语法分析器.exe'
-INTERMER = './bin/中间代码分析器.exe'
+REGEXER = './bin/正则表达式分析器'
+LEXER = './bin/词法分析器'
+LALRER = './bin/LALR(1)分析器'
+PARSER = './bin/语法分析器'
+INTERMER = './bin/中间代码分析器'
 
 os.makedirs(EXPORT_DIR, exist_ok=True)
 RULES = r"""☆ 如果与正则表达式符号冲突(+、|、(、)、*、?、~)，用\进行转义(如\+)
