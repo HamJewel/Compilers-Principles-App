@@ -47,7 +47,7 @@ class Output1:
         output = subprocess.check_output([REGEXER, REGEX, EXPORT_DIR])
         ses.lines = decode(output).strip('\n').split('\n')  # 按行分割输出结果
         ses.Lexer = read(LEXC)
-        subprocess.run([TCC, LEXC, '-o', LEXER])
+        subprocess.run([COMPILER, LEXC, '-o', LEXER])
 
     @staticmethod
     def process():
