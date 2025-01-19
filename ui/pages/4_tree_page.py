@@ -1,7 +1,10 @@
 from ui.output import *
 from streamlit_echarts import st_pyecharts
 
-_, _, start, txt = input_module(4, '语法树结构', '定义语法树', '🧩')
+col, _, start, txt = input_module(4, '语法树结构', '定义语法树', '🧩')
+with col.expander('**输入规则**'):
+    for rule in RULE3:
+        st.write(rule)
 
 if start:
     st.toast('定义中...', icon='⏳')

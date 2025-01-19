@@ -2,8 +2,8 @@ from ui.output import *
 from streamlit_echarts import st_pyecharts
 
 
-col1, _, start, txt = input_module(5, '源程序代码')
-interm = col1.checkbox('生成中间代码(仅限Mini-c)', key='interm')
+_, col, start, txt = input_module(5, '源程序代码')
+interm = col.checkbox('生成中间代码(仅限Mini-c)', key='interm')
 
 if start:
     st.toast('分析中...', icon='⏳')

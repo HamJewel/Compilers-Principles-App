@@ -1,7 +1,10 @@
 from ui.output import *
 
 
-_, _, start, txt = input_module(3, 'BNF文法')
+col, _, start, txt = input_module(3, 'BNF文法')
+with col.expander('**输入规则**'):
+    for rule in RULE2:
+        st.write(rule)
 
 if start:
     st.toast('分析中...', icon='⏳')

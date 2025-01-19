@@ -1,7 +1,9 @@
 from ui.output import *
 
-
-_, _, start, txt = input_module(1, '正则表达式')
+col, _, start, txt = input_module(1, '正则表达式')
+with col.expander('**输入规则**'):
+    for rule in RULE1:
+        st.write(rule)
 
 if start:
     st.toast('分析中...', icon='⏳')
