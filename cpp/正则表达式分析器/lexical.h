@@ -25,27 +25,6 @@ void genState() {
     LexCode.erase(LexCode.end() - 2, LexCode.end());
     LexCode += "\n};\n";
 }
-void genEntry() {
-    LexCode += "struct Entry { char c; int id; }\n";
-    for (auto& x : MDfaList) {
-        int k = 0;
-        string code;
-        for (const auto& p : x.trans) {
-            if (p.first == ANY || CharSetSym.find(p.first) != CharSetSym.end())
-                continue;
-            ++k;
-            string m = to_string(p.second);
-            string n = C2S.find(p.first) != C2S.end() ? trim(C2S[p.first]) : STR(p.first);
-            code += " {'" + n + "', " + m + "},";
-        }
-        if (k == 0) continue;
-        LexCode += "E" + to_string(x.id) + "[] = {" + code;
-        LexCode.pop_back();
-        LexCode += " },\n";
-    }
-    LexCode.erase(LexCode.end() - 2, LexCode.end());
-    LexCode += ";\n";
-}
 void genTools() {
     LexCode +=
         "void append() {\n"
@@ -64,11 +43,6 @@ void genTools() {
         "\t\tif (curr[i] != id && S[curr[i]].cd > 0)\n"
         "\t\t\treturn true;\n"
         "\treturn false;\n"
-        "}\n"
-        "int get_entry(struct Entry* e, int n) {\n"
-        "\tfor (int i = 0; i < n; ++i)\n"
-        "\t\tif (e[i].c == c) return e[i].id;\n"
-        "\treturn -1;\n"
         "}\n";
 }
 void genIsCharSet() {
@@ -81,7 +55,7 @@ void genIsCharSet() {
         for (int i = 0; i < v[0].size(); i += 2)
             code0 += " (c >= \'" + escape(v[0][i]) + "\' && c <= \'" + escape(v[0][i + 1]) + "\') ||";
         if (!code0.empty()) code0.erase(code0.end() - 3, code0.end());
-        if (!v[1].empty()) {  // µ¥×Ö·û
+        if (!v[1].empty()) {  // å•å­—ç¬¦
             for (const auto& c : v[1])
                 code1 += "|| c == \'" + escape(c) + "\' ";
             code1.pop_back();
@@ -121,17 +95,22 @@ void genCores() {
         int k = 0;
         string anyCode, setCode, charCode;
         for (const auto& p : x.trans) {
+            if (p.second == -1) continue;
             string m = to_string(p.second);
             if (p.first == ANY) {
-                if (x.id == p.second) anyCode += "\t\tif (has_end(id)) return false;\n";
+                if(x.id == p.second) anyCode += "\t\tif (has_end(id)) return false;\n";
                 anyCode += "\t\tnext[m++] = " + m + ";\n";
             }
             else if (CharSetSym.find(p.first) != CharSetSym.end())
                 setCode += "\t\tif (is_" + C2S[p.first] + "()) next[m++] = " + m + ";\n";
-            else ++k;
+            else {
+                if(charCode.empty()) charCode += "\t\tswitch (c) {\n";
+                string n = C2S.find(p.first) != C2S.end() ? trim(C2S[p.first]) : STR(p.first);
+                charCode += "\t\tcase '" + n + "': next[m++] = " + m + "; break;\n";
+            }
         }
-        if (k > 0) charCode += "\t\tx = get_entry(E" + to_string(x.id) + ", " + to_string(k) + ");\n";
         if (!anyCode.empty() || !setCode.empty() || !charCode.empty()) {
+            if (!charCode.empty()) charCode += "\t\t}\n";
             LexCode += "\tcase " + to_string(x.id) + ":\n";
             LexCode += anyCode, LexCode += setCode, LexCode += charCode;
             LexCode += "\t\tbreak;\n";
@@ -139,7 +118,6 @@ void genCores() {
     }
     LexCode +=
         "\t}\n"
-        "\tif (x != -1) next[m++] = x;\n"
         "\treturn k != m;\n"
         "}\n";
 }
@@ -178,8 +156,8 @@ void genMain() {
         "\treturn 0;\n"
         "}";
 }
-// Éú³É´Ê·¨·ÖÎöÔ´³ÌĞò
+// ç”Ÿæˆè¯æ³•åˆ†ææºç¨‹åº
 void genLexer() {
-    genHeader(), genState(), genEntry(), genTools();
+    genHeader(), genState(), genTools();
     genIsCharSet(), genCores(), genMain();
 }
