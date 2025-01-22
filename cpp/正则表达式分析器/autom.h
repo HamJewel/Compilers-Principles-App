@@ -1,31 +1,31 @@
 //*****************************************************************************
-// °æÈ¨ĞÅÏ¢£º
-// °æÈ¨ËùÓĞ (C) 2024 [»Æ¿¡ãŒ]¡£±£ÁôËùÓĞÈ¨Àû¡£
+// ç‰ˆæƒä¿¡æ¯ï¼š
+// ç‰ˆæƒæ‰€æœ‰ (C) 2024 [é»„ä¿ŠéŠ“]ã€‚ä¿ç•™æ‰€æœ‰æƒåˆ©ã€‚
 //*****************************************************************************
-// ÎÄ¼şÃû³Æ£ºregex.h
-// Ä£¿é¹¦ÄÜËµÃ÷£º
-// ¸ÃÄ£¿é¶¨Òå×Ô¶¯»ú½á¹¹£¬ÊµÏÖÕıÔò±í´ïÊ½×ªNFA¡¢DFAµÄ·½·¨¡£
+// æ–‡ä»¶åç§°ï¼šregex.h
+// æ¨¡å—åŠŸèƒ½è¯´æ˜ï¼š
+// è¯¥æ¨¡å—å®šä¹‰è‡ªåŠ¨æœºç»“æ„ï¼Œå®ç°æ­£åˆ™è¡¨è¾¾å¼è½¬NFAã€DFAçš„æ–¹æ³•ã€‚
 //
-// »ªÄÏÊ¦·¶´óÑ§-¼ÆËã»úÑ§Ôº-¼ÆËã»ú¿ÆÑ§Óë¼¼Êõ-2°à
-// ×÷Õß£º»Æ¿¡ãŒ-20222131035
-// Íê³ÉÈÕÆÚ£º2024Äê12ÔÂ3ÈÕ
+// åå—å¸ˆèŒƒå¤§å­¦-è®¡ç®—æœºå­¦é™¢-è®¡ç®—æœºç§‘å­¦ä¸æŠ€æœ¯-2ç­
+// ä½œè€…ï¼šé»„ä¿ŠéŠ“-20222131035
+// å®Œæˆæ—¥æœŸï¼š2024å¹´12æœˆ3æ—¥
 //*****************************************************************************
 #pragma once
 #include "globals.h"
-// ´´½¨²¢¼ÇÂ¼NFA½Úµã
+// åˆ›å»ºå¹¶è®°å½•NFAèŠ‚ç‚¹
 NFA* newNFA() {
     NFA* x = new NFA;
     NFAs.push(x);
     return x;
 }
-// ÊÍ·ÅËùÓĞNFA½Úµã
+// é‡Šæ”¾æ‰€æœ‰NFAèŠ‚ç‚¹
 void delNFAs() {
     while (!NFAs.empty()) {
         delete NFAs.top();
         NFAs.pop();
     }
 }
-//´´½¨»ù±¾×Ö·ûNFA£¬Ö»°üº¬Ò»¸ö×Ö·ûµÄNFAÍ¼
+//åˆ›å»ºåŸºæœ¬å­—ç¬¦NFAï¼ŒåªåŒ…å«ä¸€ä¸ªå­—ç¬¦çš„NFAå›¾
 NFAP basicNFA(const char& c) {
     NFA* S = newNFA();
     NFA* E = newNFA();
@@ -35,39 +35,39 @@ NFAP basicNFA(const char& c) {
     edge.c = c;
     edge.next = E;
     S->edges.push_back(edge);
-    // ´æÈëÈ«¾Ö×Ö·ûset
+    // å­˜å…¥å…¨å±€å­—ç¬¦set
     Chars.insert(c);
     return NFAP(S, E);
 }
-//´´½¨Á¬½ÓÔËËã·ûµÄNFAÍ¼
+//åˆ›å»ºè¿æ¥è¿ç®—ç¬¦çš„NFAå›¾
 NFAP concatNFA(NFAP& x, NFAP& y) {
-    // °Ñnfa1µÄÖÕÖ¹×´Ì¬Óënfa2µÄÆğÊ¼×´Ì¬Á¬½ÓÆğÀ´
+    // æŠŠnfa1çš„ç»ˆæ­¢çŠ¶æ€ä¸nfa2çš„èµ·å§‹çŠ¶æ€è¿æ¥èµ·æ¥
     x.end->isEnd = false;
     y.start->isStart = false;
     Edge edge;
-    edge.c = EMPTY; // ÕâÀïÓÃEMPTY±íÊ¾¿Õ±ß
+    edge.c = EMPTY; // è¿™é‡Œç”¨EMPTYè¡¨ç¤ºç©ºè¾¹
     edge.next = y.start;
     x.end->edges.push_back(edge);
     return NFAP(x.start, y.end);
 }
-//´´½¨Ñ¡ÔñÔËËã·ûµÄNFAÍ¼
+//åˆ›å»ºé€‰æ‹©è¿ç®—ç¬¦çš„NFAå›¾
 NFAP unionNFA(NFAP& x, NFAP& y) {
     NFA* S = newNFA();
     NFA* E = newNFA();
     S->isStart = true;
     E->isEnd = true;
-    // °ÑĞÂµÄ³õÌ¬Óënfa1ºÍnfa2µÄ³õÌ¬Á¬½ÓÆğÀ´
+    // æŠŠæ–°çš„åˆæ€ä¸nfa1å’Œnfa2çš„åˆæ€è¿æ¥èµ·æ¥
     Edge edge1;
     edge1.c = EMPTY;
     edge1.next = x.start;
     S->edges.push_back(edge1);
-    x.start->isStart = false;    // ³õÌ¬½áÊø
+    x.start->isStart = false;    // åˆæ€ç»“æŸ
     Edge edge2;
     edge2.c = EMPTY;
     edge2.next = y.start;
     S->edges.push_back(edge2);
-    y.start->isStart = false;    // ³õÌ¬½áÊø
-    // °Ñnfa1ºÍnfa2µÄÖÕÖ¹×´Ì¬ÓëĞÂµÄÖÕÖ¹×´Ì¬Á¬½ÓÆğÀ´
+    y.start->isStart = false;    // åˆæ€ç»“æŸ
+    // æŠŠnfa1å’Œnfa2çš„ç»ˆæ­¢çŠ¶æ€ä¸æ–°çš„ç»ˆæ­¢çŠ¶æ€è¿æ¥èµ·æ¥
     x.end->isEnd = false;
     y.end->isEnd = false;
     Edge edge3;
@@ -80,24 +80,24 @@ NFAP unionNFA(NFAP& x, NFAP& y) {
     y.end->edges.push_back(edge4);
     return NFAP(S, E);
 }
-//´´½¨*ÔËËã·ûµÄNFAÍ¼
+//åˆ›å»º*è¿ç®—ç¬¦çš„NFAå›¾
 NFAP repeatNFA(NFAP& x) {
     NFA* S = newNFA();
     NFA* E = newNFA();
     S->isStart = true;
     E->isEnd = true;
-    // °ÑĞÂµÄ³õÌ¬Óënfa1µÄ³õÌ¬Á¬½ÓÆğÀ´
+    // æŠŠæ–°çš„åˆæ€ä¸nfa1çš„åˆæ€è¿æ¥èµ·æ¥
     Edge edge1;
     edge1.c = EMPTY;
     edge1.next = x.start;
     S->edges.push_back(edge1);
-    x.start->isStart = false;    // ³õÌ¬½áÊø
-    // °ÑĞÂµÄ³õÌ¬ÓëĞÂµÄÖÕÖ¹×´Ì¬Á¬½ÓÆğÀ´
+    x.start->isStart = false;    // åˆæ€ç»“æŸ
+    // æŠŠæ–°çš„åˆæ€ä¸æ–°çš„ç»ˆæ­¢çŠ¶æ€è¿æ¥èµ·æ¥
     Edge edge2;
     edge2.c = EMPTY;
     edge2.next = E;
     S->edges.push_back(edge2);
-    // °Ñnfa1µÄÖÕÖ¹×´Ì¬ÓëĞÂµÄÖÕÖ¹×´Ì¬Á¬½ÓÆğÀ´
+    // æŠŠnfa1çš„ç»ˆæ­¢çŠ¶æ€ä¸æ–°çš„ç»ˆæ­¢çŠ¶æ€è¿æ¥èµ·æ¥
     x.end->isEnd = false;
     Edge edge3;
     edge3.c = EMPTY;
@@ -109,24 +109,24 @@ NFAP repeatNFA(NFAP& x) {
     x.end->edges.push_back(edge4);
     return NFAP(S, E);
 }
-//´´½¨£¿ÔËËã·ûµÄNFAÍ¼
+//åˆ›å»ºï¼Ÿè¿ç®—ç¬¦çš„NFAå›¾
 NFAP optionNFA(NFAP& x) {
     NFA* S = newNFA();
     NFA* E = newNFA();
     S->isStart = true;
     E->isEnd = true;
-    // °ÑĞÂµÄ³õÌ¬Óënfa1µÄ³õÌ¬Á¬½ÓÆğÀ´
+    // æŠŠæ–°çš„åˆæ€ä¸nfa1çš„åˆæ€è¿æ¥èµ·æ¥
     Edge edge1;
     edge1.c = EMPTY;
     edge1.next = x.start;
     S->edges.push_back(edge1);
-    x.start->isStart = false;    // ³õÌ¬½áÊø
-    // °ÑĞÂµÄ³õÌ¬ÓëĞÂµÄÖÕÖ¹×´Ì¬Á¬½ÓÆğÀ´
+    x.start->isStart = false;    // åˆæ€ç»“æŸ
+    // æŠŠæ–°çš„åˆæ€ä¸æ–°çš„ç»ˆæ­¢çŠ¶æ€è¿æ¥èµ·æ¥
     Edge edge2;
     edge2.c = EMPTY;
     edge2.next = E;
     S->edges.push_back(edge2);
-    // °Ñnfa1µÄÖÕÖ¹×´Ì¬ÓëĞÂµÄÖÕÖ¹×´Ì¬Á¬½ÓÆğÀ´
+    // æŠŠnfa1çš„ç»ˆæ­¢çŠ¶æ€ä¸æ–°çš„ç»ˆæ­¢çŠ¶æ€è¿æ¥èµ·æ¥
     x.end->isEnd = false;
     Edge edge3;
     edge3.c = EMPTY;
@@ -134,14 +134,14 @@ NFAP optionNFA(NFAP& x) {
     x.end->edges.push_back(edge3);
     return NFAP(S, E);
 }
-//Ê¹ÓÃDFSËã·¨Éú³É×´Ì¬×ª»»±í
+//ä½¿ç”¨DFSç®—æ³•ç”ŸæˆçŠ¶æ€è½¬æ¢è¡¨
 void buildNFAStateTable() {
     stack<NFA*> nfaStack;
     set<NFA*> visited;
-    // ³õÌ¬
+    // åˆæ€
     NFA* S = NFAp.start;
     State startState;
-    startState.flag = '-'; // -±íÊ¾³õÌ¬
+    startState.flag = '-'; // -è¡¨ç¤ºåˆæ€
     startState.id = S->id;
     StateTable[S->id] = startState;
     InsertOrder.push_back(S->id);
@@ -154,53 +154,53 @@ void buildNFAStateTable() {
         for (const Edge& edge : x->edges) {
             char trChar = edge.c;
             NFA* y = edge.next;
-            // ¼ÇÂ¼×´Ì¬×ª»»ĞÅÏ¢
+            // è®°å½•çŠ¶æ€è½¬æ¢ä¿¡æ¯
             StateTable[x->id].m[trChar].insert(y->id);
-            // Èç¹ûÏÂÒ»¸ö×´Ì¬Î´±»·ÃÎÊ£¬½«Æä¼ÓÈë¶ÑÕ»
+            // å¦‚æœä¸‹ä¸€ä¸ªçŠ¶æ€æœªè¢«è®¿é—®ï¼Œå°†å…¶åŠ å…¥å †æ ˆ
             if (visited.find(y) == visited.end()) {
                 nfaStack.push(y);
-                // ¼ÇÂ¼×´Ì¬ĞÅÏ¢
+                // è®°å½•çŠ¶æ€ä¿¡æ¯
                 State nextState;
                 nextState.id = y->id;
                 if (y->isStart) {
-                    nextState.flag = "-"; // -±íÊ¾³õÌ¬
+                    nextState.flag = "-"; // -è¡¨ç¤ºåˆæ€
                     StartNFA.insert(nextState.id);
                 }
                 if (y->isEnd) {
-                    nextState.flag = "+"; // +±íÊ¾ÖÕÌ¬
+                    nextState.flag = "+"; // +è¡¨ç¤ºç»ˆæ€
                     EndNFA.insert(nextState.id);
                 }
                 if (y->isExit)
                     ExitNFA[nextState.id] = y->cd;
                 StateTable[y->id] = nextState;
-                // ¼ÇÂ¼²åÈëË³Ğò£¨ÅÅ³ıÖÕÌ¬£©
+                // è®°å½•æ’å…¥é¡ºåºï¼ˆæ’é™¤ç»ˆæ€ï¼‰
                 if (!y->isEnd)
                     InsertOrder.push_back(y->id);
             }
         }
     }
-    // Ë³Ğò±í²Å²åÈëÖÕÌ¬
+    // é¡ºåºè¡¨æ‰æ’å…¥ç»ˆæ€
     NFA* endNode = NFAp.end;
     InsertOrder.push_back(endNode->id);
 }
-//ÕıÔò±í´ïÊ½×ªNFAÈë¿Ú
+//æ­£åˆ™è¡¨è¾¾å¼è½¬NFAå…¥å£
 void regex2NFA() {
-    // Ë«Õ»·¨£¬´´½¨Á½¸öÕ»opStack£¨ÔËËã·ûÕ»£©,nfaStack£¨nfaÍ¼Õ»£©
+    // åŒæ ˆæ³•ï¼Œåˆ›å»ºä¸¤ä¸ªæ ˆopStackï¼ˆè¿ç®—ç¬¦æ ˆï¼‰,nfaStackï¼ˆnfaå›¾æ ˆï¼‰
     stack<char> opStack;
     stack<NFAP> nfaStack;
-    // ¶Ô±í´ïÊ½½øĞĞÀàËÆÓÚÄæ²¨À¼±í´ïÊ½´¦Àí
-    // ÔËËã·û£º| @£¨£© £¿ +  *
+    // å¯¹è¡¨è¾¾å¼è¿›è¡Œç±»ä¼¼äºé€†æ³¢å…°è¡¨è¾¾å¼å¤„ç†
+    // è¿ç®—ç¬¦ï¼š| @ï¼ˆï¼‰ ï¼Ÿ +  *
     for (const char& c : OutRegex) {
         switch (c)
         {
-        case ' ': // ¿Õ¸ñÌø¹ı
+        case ' ': // ç©ºæ ¼è·³è¿‡
             break;
         case '(':
             opStack.push(c);
             break;
         case ')':
             while (!opStack.empty() && opStack.top() != '(') {
-                // ´¦ÀíÕ»¶¥ÔËËã·û£¬¹¹½¨NFAÍ¼£¬²¢½«½á¹ûÈëÕ»
+                // å¤„ç†æ ˆé¡¶è¿ç®—ç¬¦ï¼Œæ„å»ºNFAå›¾ï¼Œå¹¶å°†ç»“æœå…¥æ ˆ
                 char op = opStack.top();
                 opStack.pop();
                 NFAP y = nfaStack.top();
@@ -211,15 +211,15 @@ void regex2NFA() {
                     nfaStack.push(op == '|' ? unionNFA(x, y) : concatNFA(x, y));
             }
             if (opStack.empty()) {
-                //cout << "À¨ºÅÎ´±ÕºÏ£¬Çë¼ì²éÕıÔò±í´ïÊ½£¡";
+                //cout << "æ‹¬å·æœªé—­åˆï¼Œè¯·æ£€æŸ¥æ­£åˆ™è¡¨è¾¾å¼ï¼";
                 exit(2);
             }
             else
-                opStack.pop(); // µ¯³ö(
+                opStack.pop(); // å¼¹å‡º(
             break;
         case '|':
         case '@':
-            // ´¦ÀíÔËËã·û | ºÍ @
+            // å¤„ç†è¿ç®—ç¬¦ | å’Œ @
             while (!opStack.empty() && (opStack.top() == '|' || opStack.top() == '@')
                 && OpPrec[opStack.top()] >= OpPrec[c]) {
                 char op = opStack.top();
@@ -228,27 +228,27 @@ void regex2NFA() {
                 nfaStack.pop();
                 NFAP x = nfaStack.top();
                 nfaStack.pop();
-                // ´¦ÀíÕ»¶¥ÔËËã·û£¬¹¹½¨NFAÍ¼£¬²¢½«½á¹ûÈëÕ»
+                // å¤„ç†æ ˆé¡¶è¿ç®—ç¬¦ï¼Œæ„å»ºNFAå›¾ï¼Œå¹¶å°†ç»“æœå…¥æ ˆ
                 nfaStack.push(op == '|' ? unionNFA(x, y) : concatNFA(x, y));
             }
             opStack.push(c);
             break;
         case '?':
         case '*':
-            // ´¦Àí±Õ°üÔËËã·û ? + *
-            // ´ÓnfaStackµ¯³öNFA£¬Ó¦ÓÃÏàÓ¦µÄ±Õ°ü²Ù×÷£¬²¢½«½á¹ûÈëÕ»
+            // å¤„ç†é—­åŒ…è¿ç®—ç¬¦ ? + *
+            // ä»nfaStackå¼¹å‡ºNFAï¼Œåº”ç”¨ç›¸åº”çš„é—­åŒ…æ“ä½œï¼Œå¹¶å°†ç»“æœå…¥æ ˆ
             if (!nfaStack.empty()) {
                 NFAP t = nfaStack.top();
                 nfaStack.pop();
                 nfaStack.push(c == '?' ? optionNFA(t) : repeatNFA(t));
             }
             else {
-                //cout << "ÕıÔò±í´ïÊ½Óï·¨´íÎó£º±Õ°ü²Ù×÷Ã»ÓĞNFA¿ÉÓÃ£¡";
+                //cout << "æ­£åˆ™è¡¨è¾¾å¼è¯­æ³•é”™è¯¯ï¼šé—­åŒ…æ“ä½œæ²¡æœ‰NFAå¯ç”¨ï¼";
                 exit(2);
             }
             break;
         case EXIT:
-            if (!nfaStack.empty()) {  // ±ê¼Çµ¥´Ê±àÂëcd
+            if (!nfaStack.empty()) {  // æ ‡è®°å•è¯ç¼–ç cd
                 NFAP t = nfaStack.top();
                 nfaStack.pop();
                 t.end->cd = CdCnt++;
@@ -256,18 +256,18 @@ void regex2NFA() {
                 nfaStack.push(t);
             }
             break;
-        default:  // ´¦Àí×ÖÄ¸×Ö·û
+        default:  // å¤„ç†å­—æ¯å­—ç¬¦
             nfaStack.push(basicNFA(c));
         }
     }
-    // ´¦ÀíÕ»ÖĞÊ£ÓàµÄÔËËã·û
+    // å¤„ç†æ ˆä¸­å‰©ä½™çš„è¿ç®—ç¬¦
     while (!opStack.empty()) {
         char op = opStack.top();
         opStack.pop();
         if (op == '|' || op == '@') {
-            // ´¦Àí²¢¹¹½¨ÔËËã·û | ºÍ .
+            // å¤„ç†å¹¶æ„å»ºè¿ç®—ç¬¦ | å’Œ .
             if (nfaStack.size() < 2) {
-                //cout << "ÕıÔò±í´ïÊ½Óï·¨´íÎó£º²»×ãÒÔ´¦ÀíÔËËã·û " << op << "£¡";
+                //cout << "æ­£åˆ™è¡¨è¾¾å¼è¯­æ³•é”™è¯¯ï¼šä¸è¶³ä»¥å¤„ç†è¿ç®—ç¬¦ " << op << "ï¼";
                 exit(2);
             }
             NFAP y = nfaStack.top();
@@ -277,17 +277,17 @@ void regex2NFA() {
             nfaStack.push(op == '|' ? unionNFA(x, y) : concatNFA(x, y));
         }
         else {
-            //cout << "ÕıÔò±í´ïÊ½Óï·¨´íÎó£ºÎ´ÖªµÄÔËËã·û " << op << "£¡";
+            //cout << "æ­£åˆ™è¡¨è¾¾å¼è¯­æ³•é”™è¯¯ï¼šæœªçŸ¥çš„è¿ç®—ç¬¦ " << op << "ï¼";
             exit(2);
         }
     }
-    // ×îÖÕµÄNFAÍ¼ÔÚnfaStackµÄ¶¥²¿
+    // æœ€ç»ˆçš„NFAå›¾åœ¨nfaStackçš„é¡¶éƒ¨
     NFAp = nfaStack.top();
-    //cout << "NFAÍ¼¹¹½¨Íê±Ï" << endl;
+    //cout << "NFAå›¾æ„å»ºå®Œæ¯•" << endl;
     buildNFAStateTable();
-    //cout << "×´Ì¬×ª»»±í¹¹½¨Íê±Ï" << endl;
+    //cout << "çŠ¶æ€è½¬æ¢è¡¨æ„å»ºå®Œæ¯•" << endl;
 }
-// ÅĞ¶ÏÊÇ·ñº¬ÓĞ³õÌ¬ÖÕÌ¬£¬º¬ÓĞÔò·µ»Ø¶ÔÓ¦×Ö·û´®
+// åˆ¤æ–­æ˜¯å¦å«æœ‰åˆæ€ç»ˆæ€ï¼Œå«æœ‰åˆ™è¿”å›å¯¹åº”å­—ç¬¦ä¸²
 string getDfaFlag(set<int>& stateSet) {
     for (auto& x : stateSet)
         if (StartNFA.find(x) != StartNFA.end())
@@ -296,28 +296,28 @@ string getDfaFlag(set<int>& stateSet) {
             return "+";
     return "";
 }
-// ¼ÆËã¸ø¶¨×´Ì¬µÄ¦Å-±Õ°ü
+// è®¡ç®—ç»™å®šçŠ¶æ€çš„Îµ-é—­åŒ…
 set<int> emptyClosure(int id) {
-    set<int> eResult{ id };
+    set<int> result{ id };
     stack<int> stack;
-    stack.push(id);  //½«ÊäÈëµÄ×´Ì¬idÑ¹ÈëÕ»ÖĞ
+    stack.push(id);  //å°†è¾“å…¥çš„çŠ¶æ€idå‹å…¥æ ˆä¸­
     while (!stack.empty()) {
-        int current = stack.top();  //È¡³öÕ»¶¥ÔªËØ
+        int current = stack.top();  //å–å‡ºæ ˆé¡¶å…ƒç´ 
         stack.pop();
-        //»ñÈ¡µ±Ç°×´Ì¬µÄ¦Å-×ª»»¼¯ºÏ
+        //è·å–å½“å‰çŠ¶æ€çš„Îµ-è½¬æ¢é›†åˆ
         set<int> eClosure = StateTable[current].m[EMPTY];
-        //±éÀú¦Å-×ª»»¼¯ºÏÖĞµÄÃ¿Ò»¸ö×´Ì¬
+        //éå†Îµ-è½¬æ¢é›†åˆä¸­çš„æ¯ä¸€ä¸ªçŠ¶æ€
         for (const auto& t : eClosure) {
-            //Èç¹û½á¹û¼¯ºÏÖĞ²»°üº¬¸Ã×´Ì¬
-            if (eResult.find(t) == eResult.end()) {
-                eResult.insert(t);  //½«¸Ã×´Ì¬¼ÓÈë½á¹û¼¯ºÏ
-                stack.push(t);  //½«¸Ã×´Ì¬Ñ¹ÈëÕ»ÖĞÒÔ±ãºóĞø´¦Àí
+            //å¦‚æœç»“æœé›†åˆä¸­ä¸åŒ…å«è¯¥çŠ¶æ€
+            if (result.find(t) == result.end()) {
+                result.insert(t);  //å°†è¯¥çŠ¶æ€åŠ å…¥ç»“æœé›†åˆ
+                stack.push(t);  //å°†è¯¥çŠ¶æ€å‹å…¥æ ˆä¸­ä»¥ä¾¿åç»­å¤„ç†
             }
         }
     }
-    return eResult;
+    return result;
 }
-//¼ÆËã¸ø¶¨×´Ì¬ºÍ×Ö·ûµÄ±Õ°ü
+//è®¡ç®—ç»™å®šçŠ¶æ€å’Œå­—ç¬¦çš„é—­åŒ…
 set<int> charClosure(int id, char ch) {
     set<int> result;
     set<int> processed;
@@ -326,7 +326,7 @@ set<int> charClosure(int id, char ch) {
     while (!stack.empty()) {
         int current = stack.top();
         stack.pop();
-        //Èç¹ûµ±Ç°×´Ì¬ÒÑ¾­±»´¦Àí¹ı£¬ÔòÌø¹ı
+        //å¦‚æœå½“å‰çŠ¶æ€å·²ç»è¢«å¤„ç†è¿‡ï¼Œåˆ™è·³è¿‡
         if (processed.find(current) != processed.end())
             continue;
         processed.insert(current);
@@ -343,36 +343,36 @@ void markDFAcd() {
     for (auto& x : DfaList)
         for (auto& y : x.states)
             if (ExitNFA.find(y) != ExitNFA.end())
-                if (x.cd > 0) exit(3);  // µ¥×´Ì¬¶à³ö¿Ú
+                if (x.cd > 0) exit(3);  // å•çŠ¶æ€å¤šå‡ºå£
                 else x.cd = ExitNFA[y];
 }
 void NFA2DFA() {
-    NFA* startNFA = NFAp.start; // »ñµÃNFAÍ¼µÄÆğÊ¼Î»ÖÃ
-    int startId = startNFA->id;   // »ñµÃÆğÊ¼±àºÅ
+    NFA* startNFA = NFAp.start; // è·å¾—NFAå›¾çš„èµ·å§‹ä½ç½®
+    int startId = startNFA->id;   // è·å¾—èµ·å§‹ç¼–å·
     DFA startDFA;
-    startDFA.states = emptyClosure(startId); // ³õÊ¼±Õ°ü
-    startDFA.flag = getDfaFlag(startDFA.states); // ÅĞ¶Ï³õÌ¬ÖÕÌ¬
+    startDFA.states = emptyClosure(startId); // åˆå§‹é—­åŒ…
+    startDFA.flag = getDfaFlag(startDFA.states); // åˆ¤æ–­åˆæ€ç»ˆæ€
     queue<set<int>> newState;
     DfaSetMap[startDFA.states] = DfaCnt;
     if (startDFA.flag == "+")
         DfaEndState.insert(DfaCnt++);
     else
         DfaNotEndState.insert(DfaCnt++);
-    // ¶ÔÃ¿¸ö×Ö·û½øĞĞ±éÀú
+    // å¯¹æ¯ä¸ªå­—ç¬¦è¿›è¡Œéå†
     for (const char& ch : Chars) {
         set<int> chClosure;
         for (const int& id : startDFA.states) {
             set<int> tmp = charClosure(id, ch);
             chClosure.insert(tmp.begin(), tmp.end());
         }
-        if (chClosure.empty())  // Èç¹ûÕâ¸ö±Õ°üÊÇ¿Õ¼¯Ã»±ØÒª¼ÌĞøÏÂÈ¥ÁË
+        if (chClosure.empty())  // å¦‚æœè¿™ä¸ªé—­åŒ…æ˜¯ç©ºé›†æ²¡å¿…è¦ç»§ç»­ä¸‹å»äº†
             continue;
         int presize = DfaStateSet.size();
         DfaStateSet.insert(chClosure);
         int lastsize = DfaStateSet.size();
-        // ²»¹ÜÒ»²»Ò»Ñù¶¼ÊÇ¸Ã½ÚµãÕâ¸ö×Ö·ûµÄ×´Ì¬
+        // ä¸ç®¡ä¸€ä¸ä¸€æ ·éƒ½æ˜¯è¯¥èŠ‚ç‚¹è¿™ä¸ªå­—ç¬¦çš„çŠ¶æ€
         startDFA.trans[ch] = chClosure;
-        // Èç¹û´óĞ¡²»Ò»Ñù£¬Ö¤Ã÷ÊÇĞÂ×´Ì¬
+        // å¦‚æœå¤§å°ä¸ä¸€æ ·ï¼Œè¯æ˜æ˜¯æ–°çŠ¶æ€
         if (lastsize > presize) {
             DfaSetMap[chClosure] = DfaCnt;
             newState.push(chClosure);
@@ -383,13 +383,13 @@ void NFA2DFA() {
         }
     }
     DfaList.push_back(startDFA);
-    // ¶ÔºóÃæµÄĞÂ×´Ì¬½øĞĞ²»Í£±éÀú
+    // å¯¹åé¢çš„æ–°çŠ¶æ€è¿›è¡Œä¸åœéå†
     while (!newState.empty()) {
-        // ÄÃ³öÒ»¸öĞÂ×´Ì¬
+        // æ‹¿å‡ºä¸€ä¸ªæ–°çŠ¶æ€
         set<int> ns = newState.front();
         newState.pop();
         DFA x;
-        x.states = ns;  // ¸Ã½Úµã×´Ì¬¼¯ºÏ
+        x.states = ns;  // è¯¥èŠ‚ç‚¹çŠ¶æ€é›†åˆ
         x.flag = getDfaFlag(ns);
         for (const char& ch : Chars) {
             set<int> chClosure;
@@ -397,13 +397,13 @@ void NFA2DFA() {
                 set<int> tmp = charClosure(id, ch);
                 chClosure.insert(tmp.begin(), tmp.end());
             }
-            if (chClosure.empty()) continue; // Èç¹ûÕâ¸ö±Õ°üÊÇ¿Õ¼¯Ã»±ØÒª¼ÌĞøÏÂÈ¥ÁË
+            if (chClosure.empty()) continue; // å¦‚æœè¿™ä¸ªé—­åŒ…æ˜¯ç©ºé›†æ²¡å¿…è¦ç»§ç»­ä¸‹å»äº†
             int presize = DfaStateSet.size();
             DfaStateSet.insert(chClosure);
             int lastsize = DfaStateSet.size();
-            // ²»¹ÜÒ»²»Ò»Ñù¶¼ÊÇ¸Ã½ÚµãÕâ¸ö×Ö·ûµÄ×´Ì¬
+            // ä¸ç®¡ä¸€ä¸ä¸€æ ·éƒ½æ˜¯è¯¥èŠ‚ç‚¹è¿™ä¸ªå­—ç¬¦çš„çŠ¶æ€
             x.trans[ch] = chClosure;
-            // Èç¹û´óĞ¡²»Ò»Ñù£¬Ö¤Ã÷ÊÇĞÂ×´Ì¬
+            // å¦‚æœå¤§å°ä¸ä¸€æ ·ï¼Œè¯æ˜æ˜¯æ–°çŠ¶æ€
             if (lastsize > presize) {
                 DfaSetMap[chClosure] = DfaCnt;
                 newState.push(chClosure);
@@ -415,50 +415,50 @@ void NFA2DFA() {
         }
         DfaList.push_back(x);
     }
-    // Í³Ò»±àºÅ
+    // ç»Ÿä¸€ç¼–å·
     for (int i = 0; i < DfaList.size(); ++i)
         DfaList[i].id = i;
-    markDFAcd();  // ±ê¼ÇDFAµÄcd
+    markDFAcd();  // æ ‡è®°DFAçš„cd
 }
-/*---------------------------------DFA×îĞ¡»¯--------------------------------------*/
-// ÅĞ¶ÏÊÇ·ñº¬ÓĞ³õÌ¬ÖÕÌ¬£¬º¬ÓĞÔò·µ»Ø¶ÔÓ¦×Ö·û´®
+/*---------------------------------DFAæœ€å°åŒ–--------------------------------------*/
+// åˆ¤æ–­æ˜¯å¦å«æœ‰åˆæ€ç»ˆæ€ï¼Œå«æœ‰åˆ™è¿”å›å¯¹åº”å­—ç¬¦ä¸²
 string getMinDfaFlag(const set<int>& stateSet) {
     if (stateSet.find(0) != stateSet.end())
         return "-";
     for (const int& element : DfaEndState)
         if (stateSet.find(element) != stateSet.end())
-            return "+";  // ¿ÉÄÜ»áÓĞ¶à¸öÖÕÌ¬Í¬Ê±°üº¬£¬ÎÒÃÇÖ»ÒªÒ»¸ö
+            return "+";  // å¯èƒ½ä¼šæœ‰å¤šä¸ªç»ˆæ€åŒæ—¶åŒ…å«ï¼Œæˆ‘ä»¬åªè¦ä¸€ä¸ª
     return "";
 }
-// ¸ù¾İ×Ö·û ch ½«×´Ì¬¼¯ºÏ node ·Ö³ÉÁ½¸ö×Ó¼¯ºÏ
+// æ ¹æ®å­—ç¬¦ ch å°†çŠ¶æ€é›†åˆ node åˆ†æˆä¸¤ä¸ªå­é›†åˆ
 void splitSet(int i, char ch) {
     set<int> result;
     auto& node = DivideVec[i];
     int s = -2, cs;
     for (const auto& state : node) {
         if (DfaList[state].trans.find(ch) == DfaList[state].trans.end())
-            cs = -1; // ¿Õ¼¯
+            cs = -1; // ç©ºé›†
         else {
-            // ¸ù¾İ×Ö·û ch ÕÒµ½ÏÂÒ»¸ö×´Ì¬
+            // æ ¹æ®å­—ç¬¦ ch æ‰¾åˆ°ä¸‹ä¸€ä¸ªçŠ¶æ€
             int next_state = DfaSetMap[DfaList[state].trans[ch]];
-            cs = Dfa2MDfa[next_state];    // Õâ¸ö×´Ì¬µÄÏÂ±êÊÇ¶àÉÙ
+            cs = Dfa2MDfa[next_state];    // è¿™ä¸ªçŠ¶æ€çš„ä¸‹æ ‡æ˜¯å¤šå°‘
         }
-        if (s == -2) s = cs;   // ³õÊ¼ÏÂ±ê
-        else if (cs != s)   // Èç¹ûÏÂ±ê²»Í¬£¬¾ÍÊÇÓĞÎÊÌâ£¬ĞèÒª·Ö³öÀ´
+        if (s == -2) s = cs;   // åˆå§‹ä¸‹æ ‡
+        else if (cs != s)   // å¦‚æœä¸‹æ ‡ä¸åŒï¼Œå°±æ˜¯æœ‰é—®é¢˜ï¼Œéœ€è¦åˆ†å‡ºæ¥
             result.insert(state);
     }
-    // É¾³ıÒªÉ¾³ıµÄÔªËØ
+    // åˆ é™¤è¦åˆ é™¤çš„å…ƒç´ 
     for (int state : result)
         node.erase(state);
-    // ¶¼±éÀúÍêÁË£¬Èç¹ûresult²»ÊÇ¿Õ£¬Ö¤Ã÷ÓĞĞÂµÄ£¬¼ÓÈëvectorÖĞ
+    // éƒ½éå†å®Œäº†ï¼Œå¦‚æœresultä¸æ˜¯ç©ºï¼Œè¯æ˜æœ‰æ–°çš„ï¼ŒåŠ å…¥vectorä¸­
     if (!result.empty()) {
         DivideVec.push_back(result);
-        // Í¬Ê±¸üĞÂÏÂ±ê
+        // åŒæ—¶æ›´æ–°ä¸‹æ ‡
         for (const auto& a : result)
             Dfa2MDfa[a] = DivideVec.size() - 1;
     }
 }
-void divideState() {  // »®·Ö³õÊ¼×´Ì¬ÎªMaxCd+1¸ö¼¯ºÏ(cd=0»®·ÖÎª³õÌ¬£¬ÆäÓà»®ÎªMaxCd¸ö¶ÀÁ¢µÄÖÕÌ¬)
+void divideState() {  // åˆ’åˆ†åˆå§‹çŠ¶æ€ä¸ºMaxCd+1ä¸ªé›†åˆ(cd=0åˆ’åˆ†ä¸ºåˆæ€ï¼Œå…¶ä½™åˆ’ä¸ºMaxCdä¸ªç‹¬ç«‹çš„ç»ˆæ€)
     map<int, set<int>> m;
     for (const auto& x : DfaList)
         m[x.cd].insert(x.id);
@@ -470,20 +470,20 @@ void divideState() {  // »®·Ö³õÊ¼×´Ì¬ÎªMaxCd+1¸ö¼¯ºÏ(cd=0»®·ÖÎª³õÌ¬£¬ÆäÓà»®ÎªMax
         ++id;
     }
 }
-// ±ê¼Ç×îĞ¡DFAµÄcd
+// æ ‡è®°æœ€å°DFAçš„cd
 void markMinDFAcd() {
     for (const auto& p : Dfa2MDfa)
         MDfaList[p.second].cd = DfaList[p.first].cd;
 }
-// ×îĞ¡»¯DFA
+// æœ€å°åŒ–DFA
 void minimizeDFA() {
     divideState();
-    // µ±flagÎª1Ê±£¬Ò»Ö±Ñ­»·
+    // å½“flagä¸º1æ—¶ï¼Œä¸€ç›´å¾ªç¯
     int continueFlag = 1;
     while (continueFlag) {
         continueFlag = 0;
         int size1 = DivideVec.size();
-        for (int i = 0; i < size1; i++) // Öğ¸ö×Ö·û³¢ÊÔ·Ö¸î×´Ì¬¼¯ºÏ
+        for (int i = 0; i < size1; i++) // é€ä¸ªå­—ç¬¦å°è¯•åˆ†å‰²çŠ¶æ€é›†åˆ
             for (char ch : Chars)
                 splitSet(i, ch);
         int size2 = DivideVec.size();
@@ -495,24 +495,24 @@ void minimizeDFA() {
         x.flag = getMinDfaFlag(v);
         x.id = MDfaCnt;
         if (x.flag == "-") MDfaStart = x.id;
-        // Öğ¸ö×Ö·û
+        // é€ä¸ªå­—ç¬¦
         for (const char& ch : Chars) {
             if (v.empty()) continue;
-            int i = *(v.begin()); // ÄÃÒ»¸ö³öÀ´
+            int i = *(v.begin()); // æ‹¿ä¸€ä¸ªå‡ºæ¥
             if (DfaList[i].trans.find(ch) == DfaList[i].trans.end()) continue;
             int next_state = DfaSetMap[DfaList[i].trans[ch]];
-            int thisNum = Dfa2MDfa[next_state];    // Õâ¸ö×´Ì¬ÏÂ±ê
+            int thisNum = Dfa2MDfa[next_state];    // è¿™ä¸ªçŠ¶æ€ä¸‹æ ‡
             x.trans[ch] = thisNum;
         }
         MDfaList.push_back(x);
     }
     markMinDFAcd();
 }
-// Éú³ÉNFA±í¸ñ
+// ç”ŸæˆNFAè¡¨æ ¼
 void genNFA() {
-    vector<string> headers{ "×´Ì¬", "ID", "¦Å" };  // ÉèÖÃ±íÍ·
+    vector<string> headers{ "çŠ¶æ€", "ID", "Îµ" };  // è®¾ç½®è¡¨å¤´
     int colCnt = headers.size();
-    map<char, int> charCol{ {EMPTY, colCnt - 1} };  // ×Ö·ûºÍµÚXÁĞ´æÆğÀ´¶ÔÓ¦
+    map<char, int> charCol{ {EMPTY, colCnt - 1} };  // å­—ç¬¦å’Œç¬¬Xåˆ—å­˜èµ·æ¥å¯¹åº”
     for (const auto& c : Chars) {
         if (C2S.find(c) != C2S.end())
             headers.push_back(trim(C2S[c]));
@@ -526,16 +526,16 @@ void genNFA() {
     int row = 1;
     for (const auto& id : InsertOrder) {
         const State& node = StateTable[id];
-        NFATable[row][0] = node.flag;  // Flag ÁĞ
-        NFATable[row][1] = to_string(node.id);  // ID ÁĞ
+        NFATable[row][0] = node.flag;  // Flag åˆ—
+        NFATable[row][1] = to_string(node.id);  // ID åˆ—
         for (const auto& entry : node.m)
             NFATable[row][charCol[entry.first]] = set2string(entry.second);
         ++row;
     }
 }
-// Éú³ÉDFA±í¸ñ
+// ç”ŸæˆDFAè¡¨æ ¼
 void genDFA() {
-    vector<string> headers{ "×´Ì¬", "ID", "NFA×´Ì¬¼¯ºÏ" };
+    vector<string> headers{ "çŠ¶æ€", "ID", "NFAçŠ¶æ€é›†åˆ" };
     int colCnt = headers.size();
     map<char, int> charCol;
     for (const auto& c : Chars) {
@@ -550,17 +550,17 @@ void genDFA() {
     DFATable[0] = headers;
     int row = 1;
     for (const auto& x : DfaList) {
-        DFATable[row][0] = x.flag;  // Flag ÁĞ
-        DFATable[row][1] = to_string(x.id);  // ±àºÅ
-        DFATable[row][2] = "{" + set2string(x.states) + "}";  // ×´Ì¬¼¯ºÏ
-        for (const auto& entry : x.trans)  // ×´Ì¬×ª»»
+        DFATable[row][0] = x.flag;  // Flag åˆ—
+        DFATable[row][1] = to_string(x.id);  // ç¼–å·
+        DFATable[row][2] = "{" + set2string(x.states) + "}";  // çŠ¶æ€é›†åˆ
+        for (const auto& entry : x.trans)  // çŠ¶æ€è½¬æ¢
             DFATable[row][charCol[entry.first]] = to_string(DfaSetMap[entry.second]);
         ++row;
     }
 }
-// Éú³É×îĞ¡DFA±í¸ñ
+// ç”Ÿæˆæœ€å°DFAè¡¨æ ¼
 void genMinDFA() {
-    vector<string> headers{ "×´Ì¬", "ID", "µ¥´Ê±àÂë", "µ¥´ÊÄÚÈİ" };
+    vector<string> headers{ "çŠ¶æ€", "ID", "å•è¯ç¼–ç ", "å•è¯å†…å®¹" };
     int colCnt = headers.size();
     map<char, int> charCol;
     for (const auto& c : Chars) {
