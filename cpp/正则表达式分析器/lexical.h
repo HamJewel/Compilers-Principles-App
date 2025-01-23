@@ -55,7 +55,7 @@ void genIsCharSet() {
         for (int i = 0; i < v[0].size(); i += 2)
             code0 += " (c >= \'" + escape(v[0][i]) + "\' && c <= \'" + escape(v[0][i + 1]) + "\') ||";
         if (!code0.empty()) code0.erase(code0.end() - 3, code0.end());
-        if (!v[1].empty()) {  // å•å­—ç¬¦
+        if (!v[1].empty()) {  // µ¥×Ö·û
             for (const auto& c : v[1])
                 code1 += "|| c == \'" + escape(c) + "\' ";
             code1.pop_back();
@@ -98,13 +98,13 @@ void genCores() {
             if (p.second == -1) continue;
             string m = to_string(p.second);
             if (p.first == ANY) {
-                if(x.id == p.second) anyCode += "\t\tif (has_end(id)) return false;\n";
+                if (x.id == p.second) anyCode += "\t\tif (has_end(id)) return false;\n";
                 anyCode += "\t\tnext[m++] = " + m + ";\n";
             }
             else if (CharSetSym.find(p.first) != CharSetSym.end())
                 setCode += "\t\tif (is_" + C2S[p.first] + "()) next[m++] = " + m + ";\n";
             else {
-                if(charCode.empty()) charCode += "\t\tswitch (c) {\n";
+                if (charCode.empty()) charCode += "\t\tswitch (c) {\n";
                 string n = C2S.find(p.first) != C2S.end() ? trim(C2S[p.first]) : STR(p.first);
                 charCode += "\t\tcase '" + n + "': next[m++] = " + m + "; break;\n";
             }
@@ -156,7 +156,7 @@ void genMain() {
         "\treturn 0;\n"
         "}";
 }
-// ç”Ÿæˆè¯æ³•åˆ†æžæºç¨‹åº
+// Éú³É´Ê·¨·ÖÎöÔ´³ÌÐò
 void genLexer() {
     genHeader(), genState(), genTools();
     genIsCharSet(), genCores(), genMain();

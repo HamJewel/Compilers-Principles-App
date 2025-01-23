@@ -23,7 +23,7 @@ void delNodes() {
 }
 void trim() {
 	Nc = { newNode() };
-	Nc.insert(Nc.end(), Nb.end() - Gn, Nb.end());
+	Nc.insert(Nc.end(), Nb.end() - Gn, Nb.end());  // 反转节点栈顺序
 	Nb.erase(Nb.end() - Gn, Nb.end());
 }
 void merge(Node* x, Node* y) {  // 合并节点

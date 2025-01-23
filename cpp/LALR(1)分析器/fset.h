@@ -29,7 +29,6 @@ void buildFirstAll() {
 	for (auto& gram : Grams)
 		for (auto& token : gram.right)
 			if (isTerminal(token)) First[token] = { token };  // 终结符的First集合只有自身
-
 	int lastSize = -1, newSize = 0;
 	while (lastSize != newSize) {
 		for (auto& gram : Grams) {
