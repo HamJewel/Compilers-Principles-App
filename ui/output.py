@@ -235,7 +235,7 @@ class Output4:
     def render(self):
         trees = []
         for i in range(len(ses.lines)):
-            gram, line = ses.Grams.iloc[i], ses.lines[i]
+            gram, line = ses.Grams.iloc[i].drop(1), ses.lines[i]
             nodes = {line[0]: {'name': self.map(gram[line[0]]), 'children': []}}
             for x, y in line[1:]:
                 if x not in nodes:
