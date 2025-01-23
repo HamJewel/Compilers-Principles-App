@@ -226,16 +226,16 @@ class Output4:
         for i in range(len(ses.lines)):
             if ses.lines[i][0] == '':
                 continue
-            data = [int(ses.lines[i][0])]
+            data = [ses.lines[i][0]]
             for j in range(1, len(ses.lines[i])):
-                data.append(tuple(map(int, ses.lines[i][j].split('-'))))
+                data.append(ses.lines[i][j].split('-'))
             lines.append(data)
         ses.lines = lines[:min(len(ses.Grams), len(ses.lines))]
 
     def render(self):
         trees = []
         for i in range(len(ses.lines)):
-            gram, line = ses.Grams.iloc[i].drop(1), ses.lines[i]
+            gram, line = ses.Grams.iloc[i], ses.lines[i]
             nodes = {line[0]: {'name': self.map(gram[line[0]]), 'children': []}}
             for x, y in line[1:]:
                 if x not in nodes:
