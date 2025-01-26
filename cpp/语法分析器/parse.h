@@ -43,8 +43,14 @@ void reduce() {
 // 用文法[0]归约(归约接受)
 void accept() {
 	Gx = 0, Gy = Grams[Gx], Gn = Gy.r.size();
-	Root = Nb[0];
-	Root->token = "start";
+	if (Nb[0]->token == "") {
+		Root = Nb[0];
+		Root->token = "start";
+	}
+	else {
+		Root = newNode("start");
+		Root->kids.push_back(Nb[0]);
+	}
 	++lexi;
 	cout << "用" << Gy.str() << "归约(接受)\n";
 }
