@@ -29,7 +29,8 @@ vector<EDGE> LALR1Edges;
 vector<string> nextTokens;
 
 // 在mergeCores函数中使用
-vector<LR1ITEM> sameCores;
+vector<int> sameCores;
+vector<set<string>> cores;
 
 //map<pair<int, string>, string> LR1ACTION, LR1GOTO;
 map<pair<int, string>, string> ACTION, GOTO;
@@ -126,7 +127,7 @@ void mergeGram(LALR1GRAM& LA, const LR1GRAM& LR) {
 	LA.terms.insert(LR.term);
 }
 // 将LR(1)文法转换为字符串
-string gram2Str(const LR1GRAM& x) {
+string gramToStr(const LR1GRAM& x) {
 	string str;
 	str += x.gram.left + "->";
 	for (auto& y : x.gram.right)
@@ -135,15 +136,6 @@ string gram2Str(const LR1GRAM& x) {
 	for (auto& y : x.former)
 		str += ' ' + y;
 	return str;
-}
-// 判断两个LR(1)项目A和B是否具有相同核心
-bool isSameCore(const LR1ITEM& A, const LR1ITEM& B) {
-	set<string> s1, s2;
-	for (auto& x : A.LRGrams)
-		s1.insert(gram2Str(x));
-	for (auto& x : B.LRGrams)
-		s2.insert(gram2Str(x));
-	return s1 == s2;
 }
 // 对LR(1)项目A合并相同核心的文法，成为LALR(1)项目B
 void mergeLRToLALRItem(LR1ITEM& A, LALR1ITEM& B) {
@@ -160,29 +152,37 @@ void mergeLRToLALRItem(LR1ITEM& A, LALR1ITEM& B) {
 // 将当前记录的相同核心的LR(1)项目合并成LALR(1)项目，并加入到LALR(1)项目集中
 void addLALR1Item() {
 	LALR1ITEM Item;
-	for (auto& item : sameCores) {
-		LR2LA[item.id] = LALR1Cnt;
-		mergeLRToLALRItem(item, Item);
+	for (auto& x : sameCores) {
+		LR2LA[LR1Items[x].id] = LALR1Cnt;
+		mergeLRToLALRItem(LR1Items[x], Item);
 	}
 	Item.id = LALR1Cnt++;
 	LALR1Items.push_back(Item);
 }
 // 不断遍历LR(1)项目集，合并相同核心项
 void mergeCores() {
+	for (auto& item : LR1Items) {
+		set<string> s;
+		for (auto& gram : item.LRGrams)
+			s.insert(gramToStr(gram));
+		cores.push_back(s);
+	}
 	int n = LR1Items.size();
-	vector<bool> v(n, false);  // 访问标记，根据id判断哪些item已经访问过
+	vector<bool> v(n);
 	while (true) {
-		sameCores.clear();  // 清空上一次的相同核心列表
-		for (auto& item : LR1Items) {
-			if (v[item.id]) continue;  // 如果已访问，就跳过
+		int k = -1;
+		sameCores.clear();
+		for (int i = 0; i < n; ++i) {
+			if (v[i]) continue;  // 如果已访问，就跳过
 			if (sameCores.empty()) {  // 如果当前没有记录过任何一个LR(1)项目
-				sameCores.push_back(item);  // 直接把item加入到samCores中
-				v[item.id] = true;  // 更新标记
+				sameCores.push_back(i);  // 直接把item加入到samCores中
+				v[i] = true;  // 更新标记
+				k = i;
 				continue;
 			}
-			if (isSameCore(sameCores[0], item)) {  // 如果当前项目的核心和sameCores中的第一个相同
-				sameCores.push_back(item);  // 追加新item到sameCores中
-				v[item.id] = true;  // 更新标记
+			if (cores[k] == cores[i]) { // 如果当前项目的核心和sameCores中的第一个相同
+				sameCores.push_back(i);  // 追加新item到sameCores中
+				v[i] = true;
 			}
 		}
 		if (sameCores.empty()) return;  // 如果所有的item都进行过合并操作，就结束
@@ -204,7 +204,7 @@ void buildLALR1Edges() {  // 构造LALR1边
 
 void buildLALR1Item() {
 	mergeCores();  // 合并相同核心
-	buildLALR1Edges();  // 去重 + 构造边
+	buildLALR1Edges();  // 构造边
 }
 // 构建LALR(1)分析表
 void buildLALR1Table() {
