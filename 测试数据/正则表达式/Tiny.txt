@@ -1,7 +1,0 @@
-letter=[a-zA-Z]
-digit=[0-9]
-_identifier=letter(letter|digit)*
-_number=digit+
-__keywords=if|then|else|end|repeat|until|read|write
-__ops=\+|-|\*|/|%|^|<|<>|<=|>=|>|=|;|:=|\(|\)
-_!annotation={~*}
